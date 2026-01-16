@@ -1,5 +1,5 @@
 import express from "express";
-import client from "@repo/db/client";
+import {prismaClient} from "@repo/db/client";
 const app = express();
 app.use(express.json());
 
@@ -9,16 +9,15 @@ app.get("/", (req, res) => {
 });
 
 app.post("/signup", (req, res) => {
-    const { username, password } = req.body;
-    client.user.create({
+    const { username, password,name } = req.body;
+    prismaClient.user.create({
         data: {
             username,
-            password
+            password,
+            name
         }
     }).then(user => {
         res.status(201).json(user);
-    }).catch(e => {
-        res.status(500).json({ error: "Internal Server Error" });
-    }
+    })
 });
-app.listen(3000);
+app.listen(3002);

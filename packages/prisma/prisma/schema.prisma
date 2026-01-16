@@ -1,15 +1,80 @@
 
 
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
-model User {
-  id          String     @id     @default(uuid())
-  username    String   @unique
-  password    String   
+// generator client {
+//   provider = "prisma-client-js"
+  
+// }
+
+// datasource db {
+//   provider = "postgresql",
+//   url      = env("DATABASE_URL")
+// }
+
+model User{
+  id         String    @default(uuid())  @id 
+  username   String    @unique
+  password   String 
+  name       String
+  avatar      String?
+  rooms      Room[]
+  chats      Chat[]
+}
+
+model Room{
+  id         Int    @default(autoincrement())  @id
+  slug       String    @unique
+  createdAt   DateTime  @default(now())
+  adminId    String
+  admin      User      @relation(fields: [adminId], references: [id])
+  chats      Chat[]
+}
+
+model Chat {
+  id         Int    @default(autoincrement())  @id
+  roomId     Int
+  message    String
+  userId     String
+  room       Room   @relation(fields: [roomId], references: [id])
+  user       User   @relation(fields: [userId], references: [id])
+}
+
+
+
+enum ShapeType {
+  RECT
+  CIRCLE
+}
+
+model Shape {
+  id        String   @id @default(uuid())
+
+  roomId    Int
+
+  type      ShapeType
+
+  // Rectangle
+  x         Float?
+  y         Float?
+  width     Float?
+  height    Float?
+
+  // Circle
+  centerX   Float?
+  centerY   Float?
+  radius    Float?
+
+  createdAt DateTime @default(now())
+
+
+
 }
